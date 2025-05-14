@@ -1,18 +1,16 @@
 import { App, Editor, MarkdownView, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 
-// todo: rename
-interface MyPluginSettings {
+interface UtilPluginSettings {
 	mySetting: string;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
+const DEFAULT_SETTINGS: UtilPluginSettings = {
 	mySetting: 'default'
 }
 
-// todo: rename
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class UtilPlugin extends Plugin {
+	settings: UtilPluginSettings;
 
 	async onload() {
 		await this.loadSettings();
@@ -64,7 +62,7 @@ export default class MyPlugin extends Plugin {
 			}
 		});
 
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addSettingTab(new UtilSettingsTab(this.app, this));
 	}
 
 	onunload() {
@@ -81,11 +79,10 @@ export default class MyPlugin extends Plugin {
 }
 
 
-// todo: rename
-class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+class UtilSettingsTab extends PluginSettingTab {
+	plugin: UtilPlugin;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: UtilPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
