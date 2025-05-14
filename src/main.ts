@@ -1,5 +1,5 @@
-import { Notice, Plugin } from 'obsidian';
-import { getSelectedNodeIDs } from './nodesplitter';
+import { Notice, Plugin, Modal, App } from 'obsidian';
+import { splitNode } from './nodesplitter';
 
 interface UtilPluginSettings {
 	mySetting: string;
@@ -14,26 +14,19 @@ export default class UtilPlugin extends Plugin {
 
 	async onload() {
 		this.addCommand({
-			id: 'log-selected-nodes',
-			name: 'Log Selected Node IDs',
+			id: 'split-node',
+			name: 'Split Node',
 
-			callback: () => {
-				const ids = getSelectedNodeIDs(this.app);
-
-				let message;
-
-				if (ids === null) message = 'view is not a canvas view!'
-				else if (ids?.length === 0) message = 'node canvas nodes selected!'
-				else message = 'selected nodes: ' + ids.join(', ')
-
-				console.log(message);
-				new Notice(message);
+			callback: async () => {
+				new TextInputModal(this.app, 'Delimiter?', async (delimiter) => {
+					try {
+						await splitNode(this.app, delimiter)
+					} catch (e) {
+						new Notice(e.message)
+					}
+				}).open();
 			},
 		});
-	}
-
-	onunload() {
-
 	}
 
 	async loadSettings() {
@@ -42,5 +35,42 @@ export default class UtilPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+}
+
+class TextInputModal extends Modal {
+	prompt: string;
+	onSubmit: (result: string) => void;
+
+	constructor(app: App, prompt: string, onSubmit: (result: string) => void) {
+		super(app);
+		this.prompt = prompt;
+		this.onSubmit = onSubmit;
+	}
+
+	onOpen() {
+		const { contentEl } = this;
+
+		contentEl.createEl('h2', { text: this.prompt });
+
+		const inputEl = contentEl.createEl('input', {
+			type: 'text',
+			placeholder: 'line break',
+		});
+
+		inputEl.style.width = '100%';
+		inputEl.focus();
+
+		inputEl.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter') {
+				this.onSubmit(inputEl.value);
+				this.close();
+			}
+		});
+	}
+
+	onClose() {
+		const { contentEl } = this;
+		contentEl.empty();
 	}
 }
