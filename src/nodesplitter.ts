@@ -8,8 +8,13 @@ interface CanvasFile {
 interface Node {
 	id: string,
 	text: string
+	height: number,
+	width: number
 }
 
+
+const LINE_HEIGHT = 30;
+const LINE_WIDTH = 300;
 
 export const splitNode = async (app: App, delimiter: string) => {
 	const ids = getSelectedNodeIDs(app);
@@ -30,9 +35,21 @@ export const splitNode = async (app: App, delimiter: string) => {
 
 	const fragments = target?.text.trim().split(delimiter || '\n').map(x => x.trim());
 
-	fragments?.forEach(fragment => {
-		const id = randomBytes(8).toString('hex');
-		canvas.nodes.push({ ...target, id, text: fragment });
+	fragments
+		?.filter(fragment => fragment)
+		.forEach(fragment => {
+			const id = randomBytes(8).toString('hex');
+			const lineCount = fragment.split('\n').length;
+
+			const node = {
+				...target,
+				id,
+				text: fragment,
+				width: LINE_WIDTH,
+				height: (lineCount + 1) * LINE_HEIGHT
+			};
+
+			canvas.nodes.push(node);
 	});
 
 	canvas.nodes.remove(target);
