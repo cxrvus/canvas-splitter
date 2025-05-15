@@ -12,9 +12,10 @@ interface Node {
 	width: number
 }
 
-
+// todo: make these customizable
+const LINE_CHARS = 48;
+const LINE_WIDTH = 500;
 const LINE_HEIGHT = 30;
-const LINE_WIDTH = 300;
 
 export const splitNode = async (app: App, delimiter: string) => {
 	const ids = getSelectedNodeIDs(app);
@@ -30,29 +31,35 @@ export const splitNode = async (app: App, delimiter: string) => {
 	const content = await app.vault.read(file);
 	const canvas = JSON.parse(content) as CanvasFile;
 	
-	const target = canvas.nodes.find(x => x.id == id);
-	if (!target) throw new Error('could not find node with provided ID');
+	const origin = canvas.nodes.find(x => x.id == id);
+	if (!origin) throw new Error('could not find node with provided ID');
 
-	const fragments = target?.text.trim().split(delimiter || '\n').map(x => x.trim());
+	const fragments = origin?.text.trim().split(delimiter || '\n').map(x => x.trim());
 
 	fragments
 		?.filter(fragment => fragment)
 		.forEach(fragment => {
 			const id = randomBytes(8).toString('hex');
-			const lineCount = fragment.split('\n').length;
+
+			const lineCount = fragment.split('\n')
+				.map(line => Math.floor(line.length / LINE_CHARS))
+				.reduce((a, b) => a + b)
+			;
+
+			const height = (lineCount + 2) * LINE_HEIGHT;
 
 			const node = {
-				...target,
+				...origin,
 				id,
-				text: fragment,
+				height,
 				width: LINE_WIDTH,
-				height: (lineCount + 1) * LINE_HEIGHT
+				text: fragment,
 			};
 
 			canvas.nodes.push(node);
 	});
 
-	canvas.nodes.remove(target);
+	canvas.nodes.remove(origin);
 
 	await app.vault.modify(file, JSON.stringify(canvas, null, 2));
 }
