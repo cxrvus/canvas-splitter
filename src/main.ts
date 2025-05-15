@@ -1,5 +1,5 @@
 import { Notice, Plugin, Modal, App } from 'obsidian';
-import { splitNode } from './nodesplitter';
+import { splitNodes } from './nodesplitter';
 
 interface UtilPluginSettings {
 	mySetting: string;
@@ -20,7 +20,7 @@ export default class UtilPlugin extends Plugin {
 			callback: async () => {
 				new TextInputModal(this.app, 'Delimiter?', async (delimiter) => {
 					try {
-						await splitNode(this.app, delimiter)
+						await splitNodes(this.app, delimiter)
 					} catch (e) {
 						new Notice(e.message)
 					}

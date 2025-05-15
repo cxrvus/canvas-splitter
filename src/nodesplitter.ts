@@ -17,20 +17,22 @@ const LINE_CHARS = 48;
 const LINE_WIDTH = 500;
 const LINE_HEIGHT = 30;
 
-export const splitNode = async (app: App, delimiter: string) => {
+export const splitNodes = async (app: App, delimiter: string) => {
 	const ids = getSelectedNodeIDs(app);
-
 	if (ids?.length === 0) throw new Error('no canvas nodes selected!');
-	else if (ids?.length > 1) throw new Error('multiple nodes selected!');
-
-	const id = ids[0];
 
 	const file = app.workspace.getActiveFile();
 	if (!file) throw new Error('no active file!');
 
 	const content = await app.vault.read(file);
 	const canvas = JSON.parse(content) as CanvasFile;
-	
+
+	ids.forEach(id => splitNode(canvas, delimiter, id))
+
+	await app.vault.modify(file, JSON.stringify(canvas, null, 2));
+}
+
+const splitNode = (canvas: CanvasFile, delimiter: string, id: string) => {
 	const origin = canvas.nodes.find(x => x.id == id);
 	if (!origin) throw new Error('could not find node with provided ID');
 
@@ -60,8 +62,6 @@ export const splitNode = async (app: App, delimiter: string) => {
 	});
 
 	canvas.nodes.remove(origin);
-
-	await app.vault.modify(file, JSON.stringify(canvas, null, 2));
 }
 
 const getSelectedNodeIDs = (app: App): string[] => {
