@@ -1,9 +1,9 @@
 {
-	"id": "cxrvus-util-plugin",
-	"name": "Util Plugin",
+	"id": "canvas-splitter",
+	"name": "Canvas Card Splitter",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Obsidian Utility Plugin",
+	"description": "Split Obsidian Canvas Cards into multiple ones by specifying a delimiter",
 	"author": "cxrvus",
 	"isDesktopOnly": false
 }

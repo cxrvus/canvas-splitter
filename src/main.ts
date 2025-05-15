@@ -1,16 +1,16 @@
 import { Notice, Plugin, Modal, App } from 'obsidian';
-import { splitNodes } from './nodesplitter';
+import { splitNodes } from './splitter';
 
-interface UtilPluginSettings {
+interface CanvasSplitterSettings {
 	mySetting: string;
 }
 
-const DEFAULT_SETTINGS: UtilPluginSettings = {
+const DEFAULT_SETTINGS: CanvasSplitterSettings = {
 	mySetting: 'default'
 }
 
-export default class UtilPlugin extends Plugin {
-	settings: UtilPluginSettings;
+export default class CanvasSplitterPlugin extends Plugin {
+	settings: CanvasSplitterSettings;
 
 	async onload() {
 		this.addCommand({
