@@ -2,14 +2,17 @@ import { App, ItemView, TFile } from 'obsidian';
 
 export interface CanvasFile {
 	file: TFile,
-	content: { nodes: Node[] }
+	content: { nodes: CanvasNode[] }
 }
 
-export interface Node {
+export interface CanvasNode {
 	id: string,
 	text: string,
-	height: number,
 	width: number,
+	height: number,
+	x: number,
+	y: number,
+	color?: string,
 }
 
 export const getSelectedNodeIDs = (app: App): string[] => {
@@ -28,11 +31,11 @@ export const loadCanvas = async (app: App): Promise<CanvasFile> => {
 	if (!file) throw new Error('no active file!');
 
 	const rawContent = await app.vault.read(file);
-	const content = JSON.parse(rawContent) as { nodes: Node[] }
+	const content = JSON.parse(rawContent) as { nodes: CanvasNode[] }
 
 	return { file, content }
 }
 
 export const saveCanvas = async (app: App, canvas: CanvasFile) => {
-	await app.vault.modify(canvas.file, JSON.stringify(canvas, null, 2));
+	await app.vault.modify(canvas.file, JSON.stringify(canvas.content, null, 2));
 }

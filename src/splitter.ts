@@ -1,6 +1,6 @@
 import { App } from 'obsidian';
-import { randomBytes } from 'crypto';
-import { CanvasFile, getSelectedNodeIDs, loadCanvas } from './canvas';
+import { CanvasFile, getSelectedNodeIDs, loadCanvas, saveCanvas } from './canvas';
+import { randomId } from './util';
 
 // todo: make these customizable
 const LINE_CHARS = 48;
@@ -27,20 +27,20 @@ const splitNode = (canvas: CanvasFile, delimiter: string, id: string) => {
 	fragments
 		?.filter(fragment => fragment)
 		.forEach(fragment => {
-			const id = randomBytes(8).toString('hex');
-
 			const lineCount = fragment.split('\n')
 				.map(line => Math.floor(line.length / LINE_CHARS))
 				.reduce((a, b) => a + b)
 			;
 
+			// todo: better width / height calculation
+
 			const height = (lineCount + 2) * LINE_HEIGHT;
 
 			const node = {
 				...origin,
-				id,
-				height,
+				id: randomId(),
 				width: LINE_WIDTH,
+				height,
 				text: fragment,
 			};
 
