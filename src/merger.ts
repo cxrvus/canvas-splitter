@@ -11,10 +11,15 @@ export const mergeNodes = async (app: App, delimiter: string) => {
 
 	const originNodes = ids.map(id => canvas.content.nodes.find(node => node.id === id)) as CanvasNode[];
 
-	const fullDelimiter = delimiter + ' '
+	delimiter += ' '
 	
-	// prepending delimiter to full text to be used for bullet lists
-	const text = fullDelimiter + originNodes.map(node => node.text.trim()).join(fullDelimiter).trim();
+	let text = originNodes.map(node => node.text.trim()).join(delimiter);
+
+	// prepending delimiter to text to be used for bullet lists etc
+	const multilineDelimiter = delimiter[0] == '\n';
+	if (multilineDelimiter) text = delimiter + text;
+
+	text = text.trim();
 
 	const targetTransform = getBoundaryRect(originNodes);
 

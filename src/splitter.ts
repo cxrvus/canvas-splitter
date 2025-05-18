@@ -22,7 +22,12 @@ const splitNode = (canvas: CanvasFile, delimiter: string, id: string) => {
 	const origin = canvas.content.nodes.find(x => x.id == id);
 	if (!origin) throw new Error('could not find node with provided ID');
 
-	const fragments = origin?.text.trim().split(delimiter || '\n').map(x => x.trim());
+	// prepending line break to text to be used for bullet lists etc
+	let text = origin.text.trim();
+	const multilineDelimiter = delimiter[0] == '\n';
+	if (multilineDelimiter) text = '\n' + text
+
+	const fragments = text.split(delimiter || '\n').map(x => x.trim());
 
 	fragments
 		?.filter(fragment => fragment)

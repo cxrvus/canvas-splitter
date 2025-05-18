@@ -45,7 +45,7 @@ export class DelimiterPrompt extends Modal {
 			if (e.key === 'Enter') {
 
 				const multilinePrefix = this.multiline ? '\n' : '';
-				const delimiter = multilinePrefix + delimiterInput.value;
+				const delimiter = multilinePrefix + delimiterInput.value.trim();
 
 				if (!delimiter) throw new Error('please enter a delimiter!');
 
