@@ -1,4 +1,4 @@
-import { App, ItemView, TFile } from 'obsidian';
+import { App, TFile } from 'obsidian';
 
 export interface CanvasFile {
 	file: TFile,
@@ -16,7 +16,16 @@ export interface CanvasNode {
 }
 
 export const getSelectedNodeIDs = (app: App): string[] => {
-	const canvasView = app.workspace.getActiveViewOfType(ItemView);
+	const file = app.workspace.getActiveFile();
+	if (!file) throw new Error('no active file!');
+
+	const leaves = app.workspace.getLeavesOfType("canvas");
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const canvasLeaf = leaves.find(leaf => (leaf.view as any).file?.path === file.path);
+	if (!canvasLeaf) throw new Error('no canvas view for current file!');
+
+	const canvasView = canvasLeaf.view;
 	if (canvasView?.getViewType() !== "canvas") throw new Error('view is not a canvas view!');
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
