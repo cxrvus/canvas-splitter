@@ -18,7 +18,7 @@ export default class CanvasSplitterPlugin extends Plugin {
 			name: 'Split Node',
 
 			callback: async () => {
-				new DelimiterPrompt(this.app, 'Delimiter?', true, async (result) => {
+				new DelimiterPrompt(this.app, 'Delimiter?', false, async (result) => {
 					try {
 						await splitNodes(this.app, result.delimiter)
 					} catch (e) {
@@ -61,8 +61,10 @@ export class DelimiterPrompt extends Modal {
 	onOpen() {
 		const { contentEl } = this;
 
+		// header
 		contentEl.createEl('h2', { text: this.prompt });
 
+		// delimiter string
 		const delimiterInput = contentEl.createEl('input', {
 			type: 'text',
 			placeholder: 'line break',
@@ -71,20 +73,42 @@ export class DelimiterPrompt extends Modal {
 		delimiterInput.style.display = 'block';
 		delimiterInput.style.width = '100%';
 
+		// fancy slider checkbox
 		const checkboxDiv = contentEl.createDiv();
 		checkboxDiv.style.marginTop = '16px';
+		checkboxDiv.style.display = 'flex';
+		checkboxDiv.style.alignItems = 'center';
 
-		const multilineLabel = checkboxDiv.createEl('label', { text: 'Multiline?' });
-		const multilineCheckbox = multilineLabel.createEl('input', {
+		const multilineLabel = checkboxDiv.createEl('label', { text: 'Multiline' });
+		multilineLabel.style.marginRight = '8px';
+
+		const toggleContainer = checkboxDiv.createEl('span');
+		toggleContainer.addClass('canvas-splitter-toggle-container');
+
+		const multilineCheckbox = toggleContainer.createEl('input', {
 			type: 'checkbox'
 		});
-
+		multilineCheckbox.addClass('canvas-splitter-toggle-checkbox');
 		multilineCheckbox.checked = true;
-		multilineCheckbox.style.marginLeft = '8px';
+
+		const slider = toggleContainer.createEl('span');
+		slider.addClass('canvas-splitter-toggle-slider');
+
+		const circle = document.createElement('span');
+		circle.className = 'canvas-splitter-toggle-circle';
+		slider.appendChild(circle);
+
+		toggleContainer.appendChild(multilineCheckbox);
+		toggleContainer.appendChild(slider);
+
+		// events
+		slider.addEventListener('click', () => {
+			multilineCheckbox.checked = !multilineCheckbox.checked;
+			multilineCheckbox.dispatchEvent(new Event('change'));
+		});
 
 		contentEl.appendChild(checkboxDiv);
 
-		delimiterInput.style.width = '100%';
 		delimiterInput.focus();
 
 		delimiterInput.addEventListener('keydown', (e) => {
