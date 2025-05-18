@@ -19,8 +19,11 @@ export const getSelectedNodeIDs = (app: App): string[] => {
 	const canvasView = app.workspace.getActiveViewOfType(ItemView);
 	if (canvasView?.getViewType() !== "canvas") throw new Error('view is not a canvas view!');
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const canvas = (canvasView as any).canvas;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const selection: any = Array.from(canvas.selection);
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const ids = selection.map((node: any) => node.id)
 
 	return ids;
