@@ -18,9 +18,9 @@ export default class CanvasSplitterPlugin extends Plugin {
 			name: 'Split Node',
 
 			callback: async () => {
-				new TextInputModal(this.app, 'Delimiter?', async (delimiter) => {
+				new DelimiterPrompt(this.app, 'Delimiter?', true, async (result) => {
 					try {
-						await splitNodes(this.app, delimiter)
+						await splitNodes(this.app, result.delimiter)
 					} catch (e) {
 						new Notice(e.message)
 					}
@@ -38,14 +38,24 @@ export default class CanvasSplitterPlugin extends Plugin {
 	}
 }
 
-class TextInputModal extends Modal {
-	prompt: string;
-	onSubmit: (result: string) => void;
+export type delimiterPromptResult = {
+	delimiter: string,
+	multiline: boolean,
+}
 
-	constructor(app: App, prompt: string, onSubmit: (result: string) => void) {
+// todo: implement preset system
+export class DelimiterPrompt extends Modal {
+	prompt: string;
+	onSubmit: (result: delimiterPromptResult) => void;
+
+	//temp solution until presets are implemented
+	hasMultilineOption: boolean;
+
+	constructor(app: App, prompt: string, hasMultilineOption: boolean, onSubmit: (result: delimiterPromptResult) => void) {
 		super(app);
 		this.prompt = prompt;
 		this.onSubmit = onSubmit;
+		this.hasMultilineOption = hasMultilineOption;
 	}
 
 	onOpen() {
@@ -53,17 +63,34 @@ class TextInputModal extends Modal {
 
 		contentEl.createEl('h2', { text: this.prompt });
 
-		const inputEl = contentEl.createEl('input', {
+		const delimiterInput = contentEl.createEl('input', {
 			type: 'text',
 			placeholder: 'line break',
 		});
 
-		inputEl.style.width = '100%';
-		inputEl.focus();
+		delimiterInput.style.display = 'block';
+		delimiterInput.style.width = '100%';
 
-		inputEl.addEventListener('keydown', (e) => {
+		const checkboxDiv = contentEl.createDiv();
+		checkboxDiv.style.marginTop = '16px';
+
+		const multilineLabel = checkboxDiv.createEl('label', { text: 'Multiline?' });
+		const multilineCheckbox = multilineLabel.createEl('input', {
+			type: 'checkbox'
+		});
+
+		multilineCheckbox.checked = true;
+		multilineCheckbox.style.marginLeft = '8px';
+
+		contentEl.appendChild(checkboxDiv);
+
+		delimiterInput.style.width = '100%';
+		delimiterInput.focus();
+
+		delimiterInput.addEventListener('keydown', (e) => {
 			if (e.key === 'Enter') {
-				this.onSubmit(inputEl.value);
+				const result = { delimiter: delimiterInput.value, multiline: false }
+				this.onSubmit(result);
 				this.close();
 			}
 		});
