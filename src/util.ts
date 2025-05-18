@@ -73,11 +73,11 @@ const createMultilineSlider = (contentEl: HTMLElement): HTMLInputElement => {
 	const toggleContainer = checkboxDiv.createEl("span");
 	toggleContainer.addClass("canvas-splitter-toggle-container");
 
-	const multilineCheckbox = toggleContainer.createEl("input", {
+	const checkbox = toggleContainer.createEl("input", {
 		type: "checkbox",
 	});
-	multilineCheckbox.addClass("canvas-splitter-toggle-checkbox");
-	multilineCheckbox.checked = true;
+	checkbox.addClass("canvas-splitter-toggle-checkbox");
+	checkbox.checked = true;
 
 	const slider = toggleContainer.createEl("span");
 	slider.addClass("canvas-splitter-toggle-slider");
@@ -86,15 +86,15 @@ const createMultilineSlider = (contentEl: HTMLElement): HTMLInputElement => {
 	circle.className = "canvas-splitter-toggle-circle";
 	slider.appendChild(circle);
 
-	toggleContainer.appendChild(multilineCheckbox);
+	toggleContainer.appendChild(checkbox);
 	toggleContainer.appendChild(slider);
 
 	slider.addEventListener('click', () => {
-		multilineCheckbox.checked = !multilineCheckbox.checked;
-		multilineCheckbox.dispatchEvent(new Event('change'));
+		checkbox.checked = !checkbox.checked;
+		checkbox.dispatchEvent(new Event('change'));
 	});
 
 	contentEl.appendChild(checkboxDiv);
 
-	return multilineCheckbox;
+	return checkbox;
 }
