@@ -13,6 +13,7 @@ export interface CanvasNode {
 	x: number,
 	y: number,
 	color?: string,
+	type?: string,
 }
 
 export const getSelectedNodeIDs = (app: App): string[] => {
@@ -32,6 +33,8 @@ export const getSelectedNodeIDs = (app: App): string[] => {
 	const canvas = (canvasView as any).canvas;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const selection: any = Array.from(canvas.selection);
+
+	// todo: proper type annotation
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const ids = selection.map((node: any) => node.id)
 

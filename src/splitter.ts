@@ -22,6 +22,9 @@ const splitNode = (canvas: CanvasFile, delimiter: string, id: string) => {
 	const origin = canvas.content.nodes.find(x => x.id == id);
 	if (!origin) throw new Error('could not find node with provided ID');
 
+	// idea: better exclusion of non-text nodes
+	if (origin.type != 'text') return;
+
 	// prepending line break to text to be used for bullet lists etc
 	let text = origin.text.trim();
 	const multilineDelimiter = delimiter[0] == '\n';

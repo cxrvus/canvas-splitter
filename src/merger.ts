@@ -9,7 +9,11 @@ export const mergeNodes = async (app: App, delimiter: string) => {
 
 	const canvas = await loadCanvas(app);
 
-	const originNodes = ids.map(id => canvas.content.nodes.find(node => node.id === id)) as CanvasNode[];
+	// idea: better exclusion of non-text nodes
+	const originNodes = ids
+		.map(id => canvas.content.nodes.find(node => node.id === id) as CanvasNode) 
+		.filter(node => node.type == 'text')
+	;
 
 	delimiter += ' '
 	
